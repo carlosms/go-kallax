@@ -986,7 +986,8 @@ var identifierTypes = map[string]string{
 	"gopkg.in/src-d/go-kallax.v1.NumericID": "kallax.NumericID",
 	"github.com/satori/go.uuid.UUID":        "kallax.UUID",
 	"github.com/gofrs/uuid.UUID":            "kallax.UUID",
-	"int64": "kallax.NumericID",
+	"int64":  "kallax.NumericID",
+	"*int64": "kallax.NumericID",
 }
 
 func identifierType(f *Field) string {
