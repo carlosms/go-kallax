@@ -56,6 +56,10 @@ const truncateTimePtrTpl = `if record.%s != nil {
 record.%s = func(t time.Time) *time.Time { return &t }(record.%s.Truncate(time.Microsecond))
 }
 `
+const truncateTimestampPtrTpl = `if record.%s != nil {
+	record.%s.Time = record.%s.Time.Truncate(time.Microsecond)
+}
+`
 
 func (td *TemplateData) genFieldsTimeTruncations(buf *bytes.Buffer, fields []*Field) {
 	for _, f := range fields {
@@ -74,7 +78,11 @@ func (td *TemplateData) genFieldsTimeTruncations(buf *bytes.Buffer, fields []*Fi
 		}
 
 		if typ == "github.com/google/go-github/github.Timestamp" {
-			buf.WriteString(fmt.Sprintf("record.%s.Time = record.%s.Time.Truncate(time.Microsecond)\n", f.Name, f.Name))
+			if !f.IsPtr {
+				buf.WriteString(fmt.Sprintf("record.%s.Time = record.%s.Time.Truncate(time.Microsecond)\n", f.Name, f.Name))
+			} else {
+				buf.WriteString(fmt.Sprintf(truncateTimestampPtrTpl, f.Name, f.Name, f.Name))
+			}
 		}
 	}
 }

@@ -736,17 +736,22 @@ func (u URL) Value() (driver.Value, error) {
 type Timestamp github.Timestamp
 
 func (t *Timestamp) Scan(v interface{}) error {
-	var err error
 	switch d := v.(type) {
+	case nil:
+		return nil
+	case time.Time:
+		t = &Timestamp{Time: d}
+		return nil
 	case *time.Time:
-		t.Time = *d
+		t = &Timestamp{Time: *d}
 		return nil
 	case *string:
-		t.Time, err = time.Parse(time.RFC3339Nano, *d)
+		value, err := time.Parse(time.RFC3339Nano, *d)
+		t = &Timestamp{Time: value}
 		return err
 	}
 
-	return fmt.Errorf("kallax: cannot scan type %s into URL type", reflect.TypeOf(v))
+	return fmt.Errorf("kallax: cannot scan type %s into github.Timestamp type", reflect.TypeOf(v))
 }
 
 func (t Timestamp) Value() (driver.Value, error) {
