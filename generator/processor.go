@@ -202,6 +202,8 @@ func (p *Processor) processModel(name string, s *types.Struct, t *types.Named) (
 	}
 
 	p.processBaseField(m, fields[base])
+	fields = p.filterIgnoredFields(m, fields)
+
 	if err := m.SetFields(fields); err != nil {
 		return nil, err
 	}
@@ -243,6 +245,7 @@ func (p *Processor) processFields(s *types.Struct, done []*types.Struct, root bo
 
 	for i := 0; i < s.NumFields(); i++ {
 		f := s.Field(i)
+
 		if !f.Exported() || isIgnoredField(s, i) {
 			continue
 		}
@@ -463,6 +466,24 @@ func (p *Processor) processBaseField(m *Model, f *Field) {
 	if m.Table == "" {
 		m.Table = toLowerSnakeCase(m.Name)
 	}
+
+	m.IgnoredFields = strings.Split(f.Tag.Get("ignored"), ",")
+
+}
+
+func (p *Processor) filterIgnoredFields(m *Model, fields []*Field) []*Field {
+	for _, ignored := range m.IgnoredFields {
+		for i, field := range fields {
+			if field.Name != ignored {
+				field.Fields = p.filterIgnoredFields(m, field.Fields)
+				continue
+			}
+
+			fields = append(fields[:i], fields[i+1:]...)
+		}
+	}
+
+	return fields
 }
 
 func joinDirectory(directory string, files []string) []string {

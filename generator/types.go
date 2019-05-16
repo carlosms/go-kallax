@@ -236,6 +236,8 @@ type Model struct {
 	Type string
 	// Fields contains the list of fields in the model.
 	Fields []*Field
+	// IgnoredFields list of fields to be ignored.
+	IgnoredFields []string
 	// ImplicitFKs contains the list of fks that are implicit based on
 	// other models' definitions, such as foreign keys with no explicit inverse
 	// on the related model.
