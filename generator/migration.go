@@ -1010,6 +1010,9 @@ var typeMappings = map[string]ColumnType{
 	"url.URL":                               TextColumn,
 	"time.Time":                             TimestamptzColumn,
 	"time.Duration":                         BigIntColumn,
+
+	// type hacks for go-github
+	"github.Timestamp": TimestamptzColumn,
 }
 
 var idTypeMappings = map[string]ColumnType{

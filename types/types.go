@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/google/go-github/github"
 	"github.com/lib/pq"
 )
 
@@ -729,6 +730,27 @@ func (u *URL) Scan(v interface{}) error {
 func (u URL) Value() (driver.Value, error) {
 	url := url.URL(u)
 	return (&url).String(), nil
+}
+
+// Timestamp is a wrapper of  github.Timetsamp that implements SQLType interface.
+type Timestamp github.Timestamp
+
+func (t *Timestamp) Scan(v interface{}) error {
+	var err error
+	switch d := v.(type) {
+	case *time.Time:
+		t.Time = *d
+		return nil
+	case *string:
+		t.Time, err = time.Parse(time.RFC3339Nano, *d)
+		return err
+	}
+
+	return fmt.Errorf("kallax: cannot scan type %s into URL type", reflect.TypeOf(v))
+}
+
+func (t Timestamp) Value() (driver.Value, error) {
+	return t.Time, nil
 }
 
 type array struct {

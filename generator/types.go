@@ -114,12 +114,15 @@ var specialTypes = map[string]string{
 	"github.com/gofrs/uuid.UUID":            "kallax.UUID",
 	"net/url.URL":                           "url.URL",
 	"time.Time":                             "time.Time",
+
+	"github.com/google/go-github/github.Timestamp": "github.Timestamp",
 }
 
 // mappings defines the mapping between specific types and their counterpart
 // in kallax types
 var mappings = map[string]string{
-	"url.URL": "types.URL",
+	"url.URL":          "types.URL",
+	"github.Timestamp": "types.Timestamp",
 }
 
 // Package is the representation of a scanned package.

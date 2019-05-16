@@ -72,6 +72,10 @@ func (td *TemplateData) genFieldsTimeTruncations(buf *bytes.Buffer, fields []*Fi
 				buf.WriteString(fmt.Sprintf(truncateTimePtrTpl, f.Name, f.Name, f.Name))
 			}
 		}
+
+		if typ == "github.com/google/go-github/github.Timestamp" {
+			buf.WriteString(fmt.Sprintf("record.%s.Time = record.%s.Time.Truncate(time.Microsecond)\n", f.Name, f.Name))
+		}
 	}
 }
 
